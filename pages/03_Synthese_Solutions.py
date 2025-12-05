@@ -113,7 +113,7 @@ if section == "📊 Graphiques Clés":
     </div>
     """, unsafe_allow_html=True)
     
-    # Graphique 1
+    # Graphique 1 - Matrice Rentabilité-Volume avec fond noir
     st.markdown("#### 📍 Matrice Rentabilité–Volume (ABC)")
     
     # Données simulées
@@ -141,21 +141,45 @@ if section == "📊 Graphiques Clés":
         size='Revenue',
         color='Segment',
         hover_name='Product',
-        title='Matrice Rentabilité-Volume',
+        title='<b>Matrice Rentabilité-Volume (ABC)</b>',
         color_discrete_map={
-            'A - Critique': '#FF5252',
-            'B - Important': '#FF9800',
-            'C - Accessoire': '#2196F3'
+            'A - Critique': '#FF5252',    # Rouge vif
+            'B - Important': '#FF9800',   # Orange
+            'C - Accessoire': '#2196F3'   # Bleu
         }
     )
     
+    # Configurer le fond noir/dark mode pour le graphique 1
     fig1.update_layout(
         height=500,
-        xaxis_title="Volume des Ventes",
-        yaxis_title="Marge (%)",
+        xaxis_title="<b>Volume des Ventes</b>",
+        yaxis_title="<b>Marge (%)</b>",
         showlegend=True,
-        plot_bgcolor='white',
-        paper_bgcolor='white'
+        plot_bgcolor='#1E1E1E',  # Fond du plot en gris très foncé
+        paper_bgcolor='#121212',  # Fond du papier en noir
+        font=dict(color='#FFFFFF', family="Arial, sans-serif"),  # Texte en blanc
+        title_font=dict(size=18, color='#FFFFFF', family="Arial, sans-serif"),
+        legend=dict(
+            bgcolor='#2D2D2D',  # Fond de légende gris foncé
+            bordercolor='#444444',  # Bordure gris
+            borderwidth=1,
+            font=dict(color='#FFFFFF')
+        )
+    )
+    
+    # Personnaliser les axes
+    fig1.update_xaxes(
+        gridcolor='#444444',  # Grille en gris foncé
+        zerolinecolor='#666666',
+        linecolor='#666666',
+        tickfont=dict(color='#CCCCCC')
+    )
+    
+    fig1.update_yaxes(
+        gridcolor='#444444',  # Grille en gris foncé
+        zerolinecolor='#666666',
+        linecolor='#666666',
+        tickfont=dict(color='#CCCCCC')
     )
     
     st.plotly_chart(fig1, use_container_width=True)
@@ -194,7 +218,7 @@ if section == "📊 Graphiques Clés":
     
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
     
-    # Graphique 2
+    # Graphique 2 - ROI des Actions avec fond noir
     st.markdown("#### 📈 ROI des Actions Prioritaires (6 mois)")
     
     actions_data = pd.DataFrame({
@@ -211,45 +235,91 @@ if section == "📊 Graphiques Clés":
     
     fig2 = go.Figure()
     
+    # Barres pour coût
     fig2.add_trace(go.Bar(
         name='Coût',
         x=actions_data['Action'],
         y=actions_data['Coût (k€)'],
-        marker_color='#F44336'
+        marker_color='#F44336',  # Rouge
+        marker_line_color='rgba(255,255,255,0.8)',  # Bordure blanche
+        marker_line_width=1
     ))
     
+    # Barres pour bénéfice net
     fig2.add_trace(go.Bar(
         name='Bénéfice Net',
         x=actions_data['Action'],
         y=actions_data['Bénéfice (k€)'] - actions_data['Coût (k€)'],
-        marker_color='#4CAF50'
+        marker_color='#4CAF50',  # Vert
+        marker_line_color='rgba(255,255,255,0.8)',  # Bordure blanche
+        marker_line_width=1
     ))
     
+    # Ligne pour ROI
     fig2.add_trace(go.Scatter(
         name='ROI (%)',
         x=actions_data['Action'],
         y=actions_data['ROI (%)'],
         mode='lines+markers',
-        line=dict(color='#FF9800', width=3),
-        marker=dict(size=10),
+        line=dict(color='#FF9800', width=3),  # Orange
+        marker=dict(
+            size=10,
+            color='#FF9800',
+            line=dict(color='white', width=1)
+        ),
         yaxis='y2'
     ))
     
+    # Configurer le fond noir/dark mode pour le graphique 2
     fig2.update_layout(
         barmode='stack',
         height=500,
-        title='ROI des Actions Clés',
-        xaxis_title="Actions",
-        yaxis=dict(title="€ (milliers)"),
+        title='<b>ROI des Actions Clés (6 mois)</b>',
+        xaxis_title="<b>Actions</b>",
+        yaxis=dict(
+            title="<b>€ (milliers)</b>",
+            gridcolor='#444444',
+            zerolinecolor='#666666',
+            linecolor='#666666',
+            tickfont=dict(color='#CCCCCC')
+        ),
         yaxis2=dict(
-            title="ROI (%)",
+            title="<b>ROI (%)</b>",
             overlaying='y',
             side='right',
-            range=[0, 250]
+            range=[0, 250],
+            gridcolor='#444444',
+            zerolinecolor='#666666',
+            linecolor='#666666',
+            tickfont=dict(color='#CCCCCC')
         ),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
-        plot_bgcolor='white',
-        paper_bgcolor='white'
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            bgcolor='#2D2D2D',
+            bordercolor='#444444',
+            borderwidth=1,
+            font=dict(color='#FFFFFF')
+        ),
+        plot_bgcolor='#1E1E1E',  # Fond du plot en gris très foncé
+        paper_bgcolor='#121212',  # Fond du papier en noir
+        font=dict(color='#FFFFFF', family="Arial, sans-serif"),
+        title_font=dict(size=18, color='#FFFFFF', family="Arial, sans-serif"),
+        hoverlabel=dict(
+            bgcolor='#2D2D2D',
+            font_size=12,
+            font_color='#FFFFFF'
+        )
+    )
+    
+    # Personnaliser le titre des axes X
+    fig2.update_xaxes(
+        tickfont=dict(color='#CCCCCC'),
+        gridcolor='#444444',
+        linecolor='#666666'
     )
     
     st.plotly_chart(fig2, use_container_width=True)

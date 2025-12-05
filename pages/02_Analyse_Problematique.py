@@ -132,6 +132,10 @@ selected_vars = st.multiselect(
     key="analysis_vars"
 )
 
+# Variables globales pour stocker les résultats
+X_std = None
+X = None
+
 # ==============================
 # SECTION 2: K-means clustering
 # ==============================
@@ -246,37 +250,117 @@ else:
 # ==============================
 # SECTION 3: Détection d'outliers MCD
 # ==============================
+st.markdown("---")
+st.subheader("🔍 3. Détection des transactions atypiques (MCD)")
 
-# ==============================
-# Outliers — Mahalanobis (robuste MCD) SEUL
-# ==============================
-st.subheader("📌 Détection d'outliers — Version robuste (MCD)")
-
-# Estimation robuste
-mcd = MinCovDet(random_state=123).fit(X_std)
-md2_robust = mcd.mahalanobis(X_std)  # distances au carré
-p = X_std.shape[1]
-thr_robust = chi2.ppf(0.975, df=p)   # seuil théorique à 97.5%
-out_robust = md2_robust > thr_robust
-
-# Histogramme
-fig_mr, ax_mr = plt.subplots(figsize=(9, 4))
-sns.histplot(md2_robust, bins=60, ax=ax_mr, color="#2A9D8F")
-ax_mr.axvline(thr_robust, color="red", linestyle="--", label=f"Seuil χ²(0.975, df={p}) = {thr_robust:.2f}")
-ax_mr.set_title("Distances de Mahalanobis² (robuste MCD)")
-ax_mr.set_xlabel("Mahalanobis²")
-ax_mr.legend()
-st.pyplot(fig_mr)
-
-# Résumé + lecture business
-st.markdown(
-    f"**Outliers détectés (robuste)** : **{int(out_robust.sum())}** / {len(md2_robust)} "
-    f"(≈ {(out_robust.mean()*100):.2f}%)."
-)
-       
+# Vérifier que les conditions sont remplies pour exécuter le MCD
+if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 0:
+    try:
+        # Estimation robuste avec Minimum Covariance Determinant
+        mcd = MinCovDet(random_state=123).fit(X_std)
+        md2_robust = mcd.mahalanobis(X_std)  # Distances de Mahalanobis au carré
+        p = X_std.shape[1]  # Nombre de variables
+        thr_robust = chi2.ppf(0.975, df=p)  # Seuil théorique à 97.5%
+        out_robust = md2_robust > thr_robust
+        
+        outlier_count = int(out_robust.sum())
+        total_count = len(md2_robust)
+        outlier_percent = (outlier_count / total_count) * 100
+        
+        # Histogramme
+        fig_mr, ax_mr = plt.subplots(figsize=(10, 5))
+        
+        # Définir un fond clair mais pas trop blanc
+        fig_mr.patch.set_facecolor('#f0f0f0')
+        ax_mr.set_facecolor('#f8f8f8')
+        
+        # Histogramme des distances
+        sns.histplot(md2_robust, bins=60, ax=ax_mr, color="#2A9D8F", 
+                    edgecolor='black', linewidth=0.5, alpha=0.8)
+        ax_mr.axvline(thr_robust, color="red", linestyle="--", linewidth=2,
+                     label=f"Seuil χ²(0.975, df={p}) = {thr_robust:.2f}")
+        
+        # Zone des outliers
+        ax_mr.axvspan(thr_robust, md2_robust.max(), alpha=0.1, color='red')
+        
+        ax_mr.set_title("Distances de Mahalanobis² (MCD robuste)", 
+                       fontsize=14, fontweight='bold', color='#333333')
+        ax_mr.set_xlabel("Mahalanobis²", fontsize=12, color='#333333')
+        ax_mr.set_ylabel("Fréquence", fontsize=12, color='#333333')
+        
+        # Personnaliser les ticks
+        ax_mr.tick_params(colors='#333333', labelsize=10)
+        
+        # Personnaliser le cadre
+        for spine in ax_mr.spines.values():
+            spine.set_color('#666666')
+            spine.set_linewidth(1.5)
+        
+        # Légende
+        legend = ax_mr.legend(frameon=True, framealpha=0.9, loc='upper right')
+        legend.get_frame().set_facecolor('#ffffff')
+        legend.get_frame().set_edgecolor('#666666')
+        
+        # Ajouter une grille
+        ax_mr.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, color='#666666')
+        
+        st.pyplot(fig_mr)
+        
+        # Résumé statistique
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Transactions analysées", f"{total_count:,}")
+        with col2:
+            st.metric("Transactions atypiques", f"{outlier_count:,}")
+        with col3:
+            st.metric("Pourcentage", f"{outlier_percent:.1f}%")
+        
+        # Boîte d'interprétation
+        st.markdown(f"""
+        <div class='outlier-box'>
+        <strong>🔍 Interprétation et impact business :</strong><br>
+        <ul>
+        <li><strong>Points atypiques multi‑variables</strong> : Ces {outlier_count} transactions présentent des combinaisons inhabituelles des variables sélectionnées.</li>
+        <li><strong>À auditer en priorité</strong> : Pourraient correspondre à des remises excessives, erreurs prix/quantité, ou fraude possible.</li>
+        <li><strong>Prochaine action</strong> : Exporter la liste pour contrôle et décider si on exclut/flag ces cas avant d'évaluer la rentabilité par segment.</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Tableau des outliers
+        if outlier_count > 0:
+            with st.expander(f"📋 Voir les {min(20, outlier_count)} transactions détectées comme outliers"):
+                # Obtenir les indices des outliers
+                outlier_indices = X.index[out_robust]
+                
+                # Créer un dataframe avec les colonnes disponibles
+                available_cols = []
+                for col in ['OrderID', 'OrderDate', 'CustomerName', 'Category', 'Quantity', 'UnitPrice', 'TotalAmount']:
+                    if col in df.columns:
+                        available_cols.append(col)
+                
+                if available_cols:
+                    outlier_df = df.loc[outlier_indices, available_cols].copy()
+                    outlier_df["Distance_Mahalanobis"] = md2_robust[out_robust]
+                    outlier_df = outlier_df.sort_values("Distance_Mahalanobis", ascending=False)
+                    
+                    st.dataframe(outlier_df.head(20))
+                    st.caption(f"Affichage des {min(20, outlier_count)} premières transactions sur {outlier_count} détectées comme outliers.")
+                    
+                    # Option pour télécharger
+                    csv = outlier_df.to_csv(index=False)
+                    st.download_button(
+                        label=f"📥 Télécharger tous les outliers ({outlier_count} transactions)",
+                        data=csv,
+                        file_name="outliers_amazon.csv",
+                        mime="text/csv",
+                        type="primary"
+                    )
+                else:
+                    st.info("Aucune colonne d'identification disponible dans les données.")
         
         # Recommandations basées sur les résultats
-st.markdown("""
+        st.markdown(f"""
         <div class='interpretation-box' style='background-color: #e8f5e9; border-left-color: #4CAF50;'>
         <strong>🚀 Actions recommandées :</strong>
         
@@ -303,13 +387,67 @@ st.markdown("""
         </div>
         """, unsafe_allow_html=True)
         
+    except Exception as e:
+        st.error(f"Erreur lors de la détection des outliers: {str(e)}")
+        st.info("""
+        **Causes possibles :**
+        - Variables trop corrélées entre elles
+        - Pas assez de données (minimum 20 observations recommandé)
+        - Valeurs extrêmes qui perturbent les calculs
+        """)
+else:
+    if len(selected_vars) < 2:
+        st.info("👈 Veuillez d'abord sélectionner au moins 2 variables dans la section 1.")
+    elif X is None or X_std is None:
+        st.info("👈 Veuillez d'abord exécuter l'analyse K-means pour préparer les données.")
+    elif len(X) == 0:
+        st.warning("Pas assez de données valides après nettoyage.")
 
 # ==============================
 # SECTION 4: Synthèse et conclusions
 # ==============================
 st.markdown("---")
+st.subheader("🎯 4. Synthèse des insights")
 
+col1, col2 = st.columns(2)
 
+with col1:
+    st.markdown("""
+    <div style='background-color: #f0f8ff; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2196F3;'>
+    <h4 style='color: #333;'>📊 Segmentation (K-means)</h4>
+    <p><strong style='color: #333;'>Points forts :</strong></p>
+    <ul style='color: #333;'>
+    <li>Identification de profils clients distincts</li>
+    <li>Base pour le marketing personnalisé</li>
+    <li>Visualisation intuitive via ACP</li>
+    </ul>
+    <p><strong style='color: #333;'>Limitations :</strong></p>
+    <ul style='color: #333;'>
+    <li>Choix du nombre k subjectif</li>
+    <li>Sensible aux outliers</li>
+    <li>Interprétation parfois complexe</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+    <div style='background-color: #fff0f0; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #ff6b6b;'>
+    <h4 style='color: #333;'>🔍 Détection outliers (MCD)</h4>
+    <p><strong style='color: #333;'>Points forts :</strong></p>
+    <ul style='color: #333;'>
+    <li>Méthode robuste et statistique</li>
+    <li>Multidimensionnelle</li>
+    <li>Seuil objectif basé sur χ²</li>
+    </ul>
+    <p><strong style='color: #333;'>Limitations :</strong></p>
+    <ul style='color: #333;'>
+    <li>Requiert des données "propres"</li>
+    <li>Calcul intensif pour grands datasets</li>
+    <li>Interprétation business nécessaire</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Conclusion finale
 st.markdown("""
