@@ -108,7 +108,7 @@ st.sidebar.metric("Catégories", f"{df['Category'].nunique():,}")
 # SECTION 1: Sélection des variables pour l'analyse
 # ==============================
 st.markdown("---")
-st.subheader("📌 1. Sélection des variables pour l'analyse")
+st.subheader(" 1. Sélection des variables pour l'analyse")
 
 # Identifier les colonnes numériques pertinentes
 numeric_cols = ['Quantity', 'UnitPrice', 'Discount', 'Tax', 'ShippingCost', 'TotalAmount']
@@ -140,7 +140,7 @@ X = None
 # SECTION 2: K-means clustering
 # ==============================
 st.markdown("---")
-st.subheader("📊 2. Segmentation des transactions (K-means)")
+st.subheader(" 2. Segmentation des transactions (K-means)")
 
 if len(selected_vars) >= 2:
     # Préparation des données
@@ -194,7 +194,7 @@ if len(selected_vars) >= 2:
         st.pyplot(fig_kmeans)
         
         # Caractéristiques des clusters
-        st.subheader("📈 Caractéristiques des clusters")
+        st.subheader(" Caractéristiques des clusters")
         
         # Ajouter les clusters au dataframe original
         df_clustered = df.loc[X.index].copy()
@@ -205,7 +205,7 @@ if len(selected_vars) >= 2:
         
         # Afficher les statistiques
         for cluster_num in range(k):
-            with st.expander(f"📋 Cluster {cluster_num} - {len(df_clustered[df_clustered['Cluster']==cluster_num])} transactions"):
+            with st.expander(f" Cluster {cluster_num} - {len(df_clustered[df_clustered['Cluster']==cluster_num])} transactions"):
                 cluster_data = df_clustered[df_clustered['Cluster']==cluster_num]
                 
                 col1, col2 = st.columns(2)
@@ -224,7 +224,7 @@ if len(selected_vars) >= 2:
         # Interprétation
         st.markdown("""
         <div class='interpretation-box'>
-        <strong>💡 Interprétation de la segmentation :</strong><br>
+        <strong> Interprétation de la segmentation :</strong><br>
         
         <strong>Ce que révèle l'analyse K-means :</strong>
         <ul>
@@ -245,13 +245,13 @@ if len(selected_vars) >= 2:
     else:
         st.warning("Pas assez de données valides pour l'analyse. Veuillez vérifier vos données.")
 else:
-    st.info("👈 Veuillez sélectionner au moins 2 variables pour commencer l'analyse.")
+    st.info(" Veuillez sélectionner au moins 2 variables pour commencer l'analyse.")
 
 # ==============================
 # SECTION 3: Détection d'outliers MCD
 # ==============================
 st.markdown("---")
-st.subheader("🔍 3. Détection des transactions atypiques (MCD)")
+st.subheader(" 3. Détection des transactions atypiques (MCD)")
 
 # Vérifier que les conditions sont remplies pour exécuter le MCD
 if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 0:
@@ -318,7 +318,7 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
         # Boîte d'interprétation
         st.markdown(f"""
         <div class='outlier-box'>
-        <strong>🔍 Interprétation et impact business :</strong><br>
+        <strong> Interprétation et impact business :</strong><br>
         <ul>
         <li><strong>Points atypiques multi‑variables</strong> : Ces {outlier_count} transactions présentent des combinaisons inhabituelles des variables sélectionnées.</li>
         <li><strong>À auditer en priorité</strong> : Pourraient correspondre à des remises excessives, erreurs prix/quantité, ou fraude possible.</li>
@@ -350,7 +350,7 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
                     # Option pour télécharger
                     csv = outlier_df.to_csv(index=False)
                     st.download_button(
-                        label=f"📥 Télécharger tous les outliers ({outlier_count} transactions)",
+                        label=f" Télécharger tous les outliers ({outlier_count} transactions)",
                         data=csv,
                         file_name="outliers_amazon.csv",
                         mime="text/csv",
@@ -362,7 +362,7 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
         # Recommandations basées sur les résultats
         st.markdown(f"""
         <div class='interpretation-box' style='background-color: #e8f5e9; border-left-color: #4CAF50;'>
-        <strong>🚀 Actions recommandées :</strong>
+        <strong> Actions recommandées :</strong>
         
         <strong>1. Pour l'équipe contrôle qualité :</strong>
         <ul>
@@ -397,9 +397,9 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
         """)
 else:
     if len(selected_vars) < 2:
-        st.info("👈 Veuillez d'abord sélectionner au moins 2 variables dans la section 1.")
+        st.info(" Veuillez d'abord sélectionner au moins 2 variables dans la section 1.")
     elif X is None or X_std is None:
-        st.info("👈 Veuillez d'abord exécuter l'analyse K-means pour préparer les données.")
+        st.info(" Veuillez d'abord exécuter l'analyse K-means pour préparer les données.")
     elif len(X) == 0:
         st.warning("Pas assez de données valides après nettoyage.")
 
@@ -412,7 +412,7 @@ st.markdown("---")
 # Conclusion finale
 st.markdown("""
 <div class='conclusion-box'>
-<h4>🧠 Conclusion stratégique</h4>
+<h4> Conclusion stratégique</h4>
 
 <strong>Problématique principale identifiée :</strong>
 <p>Vos données Amazon révèlent à la fois une <strong>structure segmentée</strong> (groupes homogènes de transactions) 
@@ -436,24 +436,24 @@ et identifier des opportunités de croissance ciblées.</p>
 # Navigation
 # ==============================
 st.markdown("---")
-st.markdown("## 🚀 Navigation entre les parties")
+st.markdown("##  Navigation entre les parties")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("📊 Retour à l'exploration", key="nav_part1", type="primary", use_container_width=True):
+    if st.button(" Retour à l'exploration", key="nav_part1", type="primary", use_container_width=True):
         st.switch_page("pages/01_Exploration_des_donnees.py")
 
 with col2:
     st.markdown("""
     <div style='text-align: center; '>
-        <h4>🔍 Page actuelle</h4>
+        <h4> Page actuelle</h4>
         <p><em>Analyse & Problématique</em></p>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
-    if st.button("🚀 Vers les solutions", key="nav_part3", type="primary", use_container_width=True):
+    if st.button(" Vers les solutions", key="nav_part3", type="primary", use_container_width=True):
         st.switch_page("pages/03_Synthese_Solutions.py")
 
 # ===== Footer =====

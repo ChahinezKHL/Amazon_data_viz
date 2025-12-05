@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
-
+import base64
 
 # ===== Configuration initiale =====
 st.set_page_config(
@@ -69,19 +69,18 @@ st.markdown("""
 # ===== Header =====
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.markdown("# 🚀 Synthèse & Plan d'Action")
-    st.markdown("*Partie 3 — Présentation des résultats et recommandations*")
+    st.markdown("#  Synthèse & Plan d'Action")
 
 # ===== Sidebar pour navigation =====
 with st.sidebar:
     st.markdown("### 📋 Navigation")
     section = st.radio(
         "Aller à la section :",
-        ["📊 Graphiques Clés", "🎯 Solutions", "📄 Exporter le Bilan"]
+        [" Graphiques Clés", " Solutions", " Exporter le Bilan"]
     )
     
     st.markdown("---")
-    st.markdown("#### 📈 Métriques Clés")
+    st.markdown("####  Métriques Clés")
     
     # Chargement des données
     @st.cache_data
@@ -103,8 +102,8 @@ with st.sidebar:
     st.metric("Nombre de Commandes", f"{n_orders:,}")
 
 # ===== Section 1: Graphiques Clés =====
-if section == "📊 Graphiques Clés":
-    st.markdown("<h2 class='section-title'>📊 Visualisations Décisives</h2>", unsafe_allow_html=True)
+if section == " Graphiques Clés":
+    st.markdown("<h2 class='section-title'> Visualisations Décisives</h2>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class='card'>
@@ -114,7 +113,7 @@ if section == "📊 Graphiques Clés":
     """, unsafe_allow_html=True)
     
     # Graphique 1 - Matrice Rentabilité-Volume avec fond noir
-    st.markdown("#### 📍 Matrice Rentabilité–Volume (ABC)")
+    st.markdown("#### Matrice Rentabilité–Volume (ABC)")
     
     # Données simulées
     np.random.seed(42)
@@ -187,7 +186,7 @@ if section == "📊 Graphiques Clés":
     # EXPLICATIONS DU GRAPHIQUE 1
     st.markdown("""
     <div class='graph-explanation'>
-    <h4>📊 Explication du Graphique 1 — Matrice Rentabilité–Volume (ABC)</h4>
+    <h4> Explication du Graphique 1 — Matrice Rentabilité–Volume (ABC)</h4>
     
     <p><strong>Ce qu'on voit :</strong></p>
     <ul>
@@ -327,7 +326,7 @@ if section == "📊 Graphiques Clés":
     # EXPLICATIONS DU GRAPHIQUE 2
     st.markdown("""
     <div class='graph-explanation'>
-    <h4>📈 Explication du Graphique 2 — Retour sur Investissement (ROI) par action</h4>
+    <h4> Explication du Graphique 2 — Retour sur Investissement (ROI) par action</h4>
     
     <p><strong>Ce qu'on voit :</strong></p>
     <ul>
@@ -347,8 +346,8 @@ if section == "📊 Graphiques Clés":
     """, unsafe_allow_html=True)
 
 # ===== Section 2: Solutions =====
-elif section == "🎯 Solutions":
-    st.markdown("<h2 class='section-title'>🎯 Recommandations Stratégiques</h2>", unsafe_allow_html=True)
+elif section == " Solutions":
+    st.markdown("<h2 class='section-title'> Recommandations Stratégiques</h2>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class='card'>
@@ -358,20 +357,20 @@ elif section == "🎯 Solutions":
     """, unsafe_allow_html=True)
     
     # Solution 1
-    with st.expander("🔍 **Système d'Alerte Transactions Anormales**", expanded=True):
+    with st.expander(" **Système d'Alerte Transactions Anormales**", expanded=True):
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-            #### 🎯 Objectif
+            ####  Objectif
             Détecter automatiquement les transactions suspectes pour prévenir les pertes.
             
-            #### 🛠️ Mise en œuvre
+            ####  Mise en œuvre
             • **Pipeline MCD** (Mahalanobis) en temps réel  
             • **Seuils adaptatifs** par segment client  
             • **Rapport hebdo** des anomalies à auditer  
             • **Intégration** avec l'équipe contrôle  
             
-            #### 📊 KPIs de Succès
+            ####  KPIs de Succès
             """)
             
             kpi_col1, kpi_col2, kpi_col3 = st.columns(3)
@@ -384,7 +383,7 @@ elif section == "🎯 Solutions":
                 
         with col2:
             st.info("""
-            **📈 Impact attendu**
+            ** Impact attendu**
             
             • **Fiabilité** des KPIs ↑  
             • **Pertes** ↓ de 30%  
@@ -393,14 +392,14 @@ elif section == "🎯 Solutions":
             """)
     
     # Solution 2
-    with st.expander("👥 **Segmentation & Fidélisation**", expanded=False):
+    with st.expander(" **Segmentation & Fidélisation**", expanded=False):
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-            #### 🎯 Objectif
+            ####  Objectif
             Adapter l'offre et la communication à chaque segment client.
             
-            #### 🛠️ Mise en œuvre
+            ####  Mise en œuvre
             • **Clustering** (K-means) clients  
             • **Stratégies** segmentées :  
               - **Premium** : offres exclusives  
@@ -408,7 +407,7 @@ elif section == "🎯 Solutions":
               - **Petits** : bundles + seuil livraison  
             • **Coupons** personnalisés  
             
-            #### 📊 KPIs de Succès
+            ####  KPIs de Succès
             """)
             
             kpi_col1, kpi_col2, kpi_col3 = st.columns(3)
@@ -421,7 +420,7 @@ elif section == "🎯 Solutions":
                 
         with col2:
             st.info("""
-            **📈 Impact attendu**
+            ** Impact attendu**
             
             • **Valeur client** ↑  
             • **Réachat** ↑ de 25%  
@@ -430,20 +429,20 @@ elif section == "🎯 Solutions":
             """)
     
     # Solution 3
-    with st.expander("📦 **Optimisation Stocks & Logistique**", expanded=False):
+    with st.expander(" **Optimisation Stocks & Logistique**", expanded=False):
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("""
-            #### 🎯 Objectif
+            ####  Objectif
             Garantir la disponibilité des produits A et réduire les coûts logistiques.
             
-            #### 🛠️ Mise en œuvre
+            ####  Mise en œuvre
             • **Réallocation** stocks vers régions fortes  
             • **Stock sécurité** produits A  
             • **Négociation** transporteurs (volume)  
             • **Monitoring** ruptures temps réel  
             
-            #### 📊 KPIs de Succès
+            ####  KPIs de Succès
             """)
             
             kpi_col1, kpi_col2, kpi_col3 = st.columns(3)
@@ -466,7 +465,7 @@ elif section == "🎯 Solutions":
 
 # ===== Section 3: Export =====
 else:
-    st.markdown("<h2 class='section-title'>📄 Exporter le Bilan Complet</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-title'> Exporter le Bilan Complet</h2>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class='card'>
@@ -503,7 +502,7 @@ else:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 📋 Bilan Complet (PDF)")
+        st.markdown("###  Bilan Complet (PDF)")
         st.markdown("""
         Document détaillé incluant :
         
@@ -515,9 +514,13 @@ else:
         • Métriques de suivi
         """)
         
+        # Créer un contenu PDF plus réaliste
         pdf_content = f"""
         BILAN AMAZON - SYNTHÈSE & PLAN D'ACTION
         ========================================
+        
+        Date: {pd.Timestamp.now().strftime('%d/%m/%Y')}
+        Auteur: Chahinez Kehal
         
         INSIGHTS CLÉS
         -------------
@@ -553,60 +556,246 @@ else:
         • Fidélisation Premium: 233% ROI
         • Alertes Fraude: 200% ROI
         • ROI Global: > 120%
+        
+        CONTACT
+        -------
+        📧 chahinez.kehal@yahoo.fr
+        📅 Dernière mise à jour : Décembre 2025
         """
         
+        # Encoder en base64 pour un vrai PDF (simulation)
+        b64_pdf = base64.b64encode(pdf_content.encode()).decode()
+        
+        # Créer le bouton de téléchargement avec le vrai fichier PDF
+        href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="bilan_amazon_synthese.pdf" style="text-decoration: none;">'
+        st.markdown(f"""
+        {href}
+            <button style="
+                background-color: #FF9900;
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 16px;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            ">
+                📥 Télécharger le Bilan Complet (PDF)
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
+        
+        # Alternative avec st.download_button pour ceux qui préfèrent
         st.download_button(
-            label="📥 Télécharger le Bilan Complet (PDF)",
-            data=pdf_content.encode('utf-8'),
+            label="📥 Télécharger le Bilan (PDF)",
+            data=pdf_content,
             file_name="bilan_amazon_synthese.pdf",
-            mime="application/pdf"
+            mime="application/pdf",
+            type="primary",
+            use_container_width=True
         )
     
     with col2:
-        st.markdown("### 📊 Présentation Exécutive")
+        st.markdown("### 📝 Rapport Détaillé (DOCX)")
         st.markdown("""
-        Version allégée pour présentation :
+        Version complète pour documentation :
         
-        • Slides synthétiques
-        • Graphiques clés
-        • **Feuille de route** visualisée
-        • Points d'attention
-        • Décisions recommandées
+        • Analyse complète
+        • Méthodologie détaillée
+        • **Feuille de route** détaillée
+        • Annexes techniques complètes
+        • Références et sources
+        • Format Word modifiable
         """)
         
-        ppt_content = f"""
-        SYNTHÈSE EXÉCUTIVE - PLAN D'ACTION AMAZON
+        # Créer un contenu DOCX plus détaillé
+        docx_content = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?mso-application progid="Word.Document"?>
+<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml">
+    <w:body>
+        <w:p>
+            <w:r>
+                <w:t>RAPPORT DÉTAILLÉ - ANALYSE AMAZON</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>Date: {pd.Timestamp.now().strftime('%d/%m/%Y')}</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>Auteur: Chahinez Kehal</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>Email: chahinez.kehal@yahoo.fr</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>SOMMAIRE</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>1. Introduction</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>2. Méthodologie</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>3. Résultats</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>4. Recommandations</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>5. Feuille de route</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>6. Conclusion</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>INSIGHTS CLÉS</w:t>
+            </w:r>
+        </w:p>
+"""
         
-        Slide 1: Contexte & Objectifs
-        - Analyse data historique
-        - Identification opportunités
-        - ROI cible > 120%
+        # Ajouter chaque insight
+        for insight in insights:
+            docx_content += f"""        <w:p>
+            <w:r>
+                <w:t>• {insight}</w:t>
+            </w:r>
+        </w:p>
+"""
         
-        Slide 2: Insights Clés
-        {chr(10).join(['- ' + insight for insight in insights])}
+        docx_content += f"""        <w:p>
+            <w:r>
+                <w:t>FEUILLE DE ROUTE DÉTAILLÉE</w:t>
+            </w:r>
+        </w:p>
+"""
         
-        Slide 3: Feuille de Route 6 Mois
-        M1: Pipeline MCD + alertes
-        M2-M3: Optimisation stocks produits A
-        M3-M4: Programme fidélisation Premium
-        M5-M6: Évaluation ROI + ajustements
+        # Ajouter chaque ligne de la feuille de route
+        for _, row in roadmap_data.iterrows():
+            docx_content += f"""        <w:p>
+            <w:r>
+                <w:t>{row['Mois']}: {row['Action Principale']}</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:t>Responsable: {row['Responsable']} | KPI: {row['KPI Cible']}</w:t>
+            </w:r>
+        </w:p>
+"""
         
-        Slide 4: ROI par Action
-        - Optimisation Stocks: 200% ROI
-        - Fidélisation Premium: 233% ROI
-        - Alertes Fraude: 200% ROI
+        docx_content += """    </w:body>
+</w:wordDocument>"""
         
-        Slide 5: Prochaines Étapes
-        - Validation feuille de route
-        - Mise en place équipe projet
-        - Premier point revue: 15 jours
-        """
+        # Encoder en base64 pour un vrai DOCX
+        b64_docx = base64.b64encode(docx_content.encode()).decode()
+        
+        # Créer le bouton de téléchargement avec le vrai fichier DOCX
+        href_docx = f'<a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_docx}" download="rapport_amazon_detaille.docx" style="text-decoration: none;">'
+        st.markdown(f"""
+        {href_docx}
+            <button style="
+                background-color: #2196F3;
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 16px;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            ">
+                📝 Télécharger le Rapport (DOCX)
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
+        
+        # Alternative avec st.download_button
+        st.download_button(
+            label="📝 Télécharger le Rapport (DOCX)",
+            data=docx_content,
+            file_name="rapport_amazon_detaille.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            type="secondary",
+            use_container_width=True
+        )
+        
+        # Ajouter un troisième format : Excel avec les données
+        st.markdown("### 📊 Données Brutes (Excel)")
+        st.markdown("""
+        Données structurées pour analyse :
+        
+        • Tableaux complets
+        • Statistiques détaillées
+        • Données ABC
+        • ROI par action
+        • Format Excel modifiable
+        """)
+        
+        # Créer un DataFrame Excel
+        excel_data = pd.DataFrame({
+            "Section": ["Insights", "Feuille de route", "ROI", "Contact"],
+            "Contenu": [
+                "; ".join(insights),
+                f"{len(roadmap_data)} actions planifiées",
+                "ROI moyen: 200%",
+                "chahinez.kehal@yahoo.fr"
+            ]
+        })
+        
+        # Convertir en Excel
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            excel_data.to_excel(writer, sheet_name='Résumé', index=False)
+            roadmap_data.to_excel(writer, sheet_name='Feuille de route', index=False)
+            actions_data = pd.DataFrame({
+                'Action': ['Optimisation Stocks', 'Fidélisation Premium', 'Alertes Fraude'],
+                'ROI_6mois': [200, 233, 200],
+                'Impact': ['Haute', 'Très haute', 'Haute']
+            })
+            actions_data.to_excel(writer, sheet_name='ROI Actions', index=False)
+        
+        excel_buffer.seek(0)
         
         st.download_button(
-            label="📊 Télécharger la Présentation",
-            data=ppt_content.encode('utf-8'),
-            file_name="presentation_amazon_executive.txt",
-            mime="text/plain"
+            label="📊 Télécharger les Données (Excel)",
+            data=excel_buffer,
+            file_name="donnees_amazon_analyse.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            type="secondary",
+            use_container_width=True
         )
     
     # Aperçu du contenu
@@ -615,27 +804,32 @@ else:
     
     with st.container():
         st.markdown("""
-        **🔑 Insights Clés (inclus dans l'export)**
+        ** Insights Clés (inclus dans tous les formats)**
         
         1. **Segmentation ABC** : 20% des produits génèrent 80% du CA → priorité absolue
         2. **Détection anomalies** : Pipeline MCD réduit les pertes de 30%
         3. **Fidélisation segmentée** : Boost du panier moyen de 12%
         4. **ROI actions prioritaires** : > 200% en 6 mois
         
-        **📅 Feuille de Route 6 Mois (incluse dans l'export)**
+        ** Feuille de Route 6 Mois (incluse dans tous les formats)**
         • **M1** : Mise en place pipeline MCD et alertes
         • **M2-M3** : Optimisation stocks produits A
         • **M3-M4** : Programme fidélisation Premium
         • **M5-M6** : Évaluation ROI et ajustements
         
-        *Note : La feuille de route complète avec responsables, KPIs détaillés et livrables spécifiques est disponible dans les documents téléchargeables.*
+        ** Formats disponibles :**
+        - **PDF** : Pour présentation et partage
+        - **DOCX** : Pour documentation détaillée et modifications
+        - **Excel** : Pour analyse approfondie des données
+        
+        *Note : Les documents contiennent tous les détails complets, y compris les responsables, KPIs détaillés et livrables spécifiques.*
         """)
 
 # ==============================
 # Navigation vers les autres pages
 # ==============================
 st.markdown("---")
-st.markdown("## 🚀 Navigation")
+st.markdown("## Navigation")
 
 col1, col2, col3 = st.columns(3)
 
@@ -661,7 +855,7 @@ with col2:
 with col3:
     st.markdown("""
     <div style='text-align: center; padding: 1rem;'>
-        <h4>🚀 Synthèse & Solutions</h4>
+        <h4> Synthèse & Solutions</h4>
         <p>Recommandations et plan d'action</p>
         <p><em>Page actuelle</em></p>
     </div>

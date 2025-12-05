@@ -152,16 +152,16 @@ df = load_data("Amazon.csv")
 # ==============================
 st.markdown("<h3 class='section-header'>📋 Aperçu du dataset</h3>", unsafe_allow_html=True)
 
-with st.expander("👀 Aperçu des données (5 premières lignes)"):
+with st.expander(" Aperçu des données (5 premières lignes)"):
         st.write(df.head(5))
 
-with st.expander("📊 Statistiques descriptives"):
+with st.expander(" Statistiques descriptives"):
         st.write(df.describe())
 
 # ==============================
 # Histogramme des montants totaux
 # ==============================
-st.markdown("<h3 class='section-header'>📈 Distribution des montants totaux</h3>", unsafe_allow_html=True)
+st.markdown("<h3 class='section-header'> Distribution des montants totaux</h3>", unsafe_allow_html=True)
 
 bins = st.slider("Nombre de classes (bins)", min_value=20, max_value=120, value=50, step=5, key="hist_bins")
 
@@ -176,7 +176,7 @@ st.pyplot(fig_hist)
 q_low, q_high = np.percentile(df["TotalAmount"], [5, 95])
 st.markdown(f"""
 <div class='indicator-box'>
-<strong>📊 Indicateurs clés :</strong><br>
+<strong> Indicateurs clés :</strong><br>
 • Moyenne = {df['TotalAmount'].mean():.2f}<br>
 • Médiane = {df['TotalAmount'].median():.2f}<br>
 • 5ème percentile = {q_low:.2f}<br>
@@ -227,7 +227,7 @@ st.markdown("""
 # ==============================
 # ACP
 # ==============================
-st.markdown("<h3 class='section-header'>🧭 Analyse en Composantes Principales (ACP)</h3>", unsafe_allow_html=True)
+st.markdown("<h3 class='section-header'> Analyse en Composantes Principales (ACP)</h3>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class='interpretation-box' style='margin-bottom: 1.5rem;'>
@@ -264,7 +264,7 @@ if len(selected_vars) >= 2:
     # Explications ACP dans une boîte avec fond clair
     st.markdown(f"""
     <div class='indicator-box'>
-    <strong>🔎 Variance expliquée :</strong><br>
+    <strong> Variance expliquée :</strong><br>
     • PC1 = {ve[0]:.1%}<br>
     • PC2 = {ve[1]:.1%}<br>
     • Total = {(ve[0]+ve[1]):.1%}
@@ -274,7 +274,7 @@ if len(selected_vars) >= 2:
     # Interprétation détaillée ACP
     st.markdown("""
     <div class='pca-explanation'>
-    <strong>🧠 Explication des composantes principales :</strong><br>
+    <strong> Explication des composantes principales :</strong><br>
     
     <strong>PC1</strong> : Principalement lié au montant total et au prix unitaire.<br>
     <strong>PC2</strong> : Principalement lié à la quantité et aux taxes.
@@ -298,22 +298,22 @@ else:
 st.markdown("---")
 st.markdown("""
 <div class='conclusion-box'>
-<h3>🧠 Synthèse des insights</h3>
+<h3> Synthèse des insights</h3>
 
-<strong>📈 Histogramme : Distribution des ventes</strong>
+<strong> Histogramme : Distribution des ventes</strong>
 <p>• Confirme la présence de quelques très grosses commandes qui influencent la moyenne<br>
 • Suggère une segmentation naturelle entre petits, moyens et gros paniers</p>
 
-<strong>🔥 Heatmap : Relations entre variables</strong>
+<strong> Heatmap : Relations entre variables</strong>
 <p>• Identifie les leviers qui influencent le montant total (prix, taxes, remises)<br>
 • Montre des relations attendues qui valident la qualité des données</p>
 
-<strong>🧭 ACP : Structure des données</strong>
+<strong> ACP : Structure des données</strong>
 <p>• Simplifie la complexité des données en 2 dimensions principales<br>
 • Prépare le terrain pour la segmentation et l'analyse de patterns<br>
 • Révéle des combinaisons naturelles de variables</p>
 
-<strong>➡️ Amorce pour la suite :</strong>
+<strong> Amorce pour la suite :</strong>
 <p>Cette exploration initiale nous donne une solide compréhension des données. 
 Nous allons maintenant analyser les <strong>patterns et anomalies</strong> pour affiner la segmentation 
 et détecter les transactions atypiques qui pourraient nécessiter une attention particulière.</p>
@@ -324,7 +324,7 @@ et détecter les transactions atypiques qui pourraient nécessiter une attention
 # Navigation vers les autres pages
 # ==============================
 st.markdown("---")
-st.markdown("## 🚀 Navigation")
+st.markdown("##  Navigation")
 
 col1, col2, col3 = st.columns(3)
 
