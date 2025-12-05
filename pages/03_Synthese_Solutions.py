@@ -656,7 +656,7 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
     if st.button("➡️ Accéder à la Partie 2", key="goto_part2", type="primary"):
-        st.switch_page("pages/02_Synthese_Solutions.py")
+        st.switch_page("pages/02_Analyse_Problematique.py")
 
 with col3:
     st.markdown("""

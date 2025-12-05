@@ -407,47 +407,7 @@ else:
 # SECTION 4: Synthèse et conclusions
 # ==============================
 st.markdown("---")
-st.subheader("🎯 4. Synthèse des insights")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("""
-    <div style='background-color: #f0f8ff; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2196F3;'>
-    <h4 style='color: #333;'>📊 Segmentation (K-means)</h4>
-    <p><strong style='color: #333;'>Points forts :</strong></p>
-    <ul style='color: #333;'>
-    <li>Identification de profils clients distincts</li>
-    <li>Base pour le marketing personnalisé</li>
-    <li>Visualisation intuitive via ACP</li>
-    </ul>
-    <p><strong style='color: #333;'>Limitations :</strong></p>
-    <ul style='color: #333;'>
-    <li>Choix du nombre k subjectif</li>
-    <li>Sensible aux outliers</li>
-    <li>Interprétation parfois complexe</li>
-    </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("""
-    <div style='background-color: #fff0f0; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #ff6b6b;'>
-    <h4 style='color: #333;'>🔍 Détection outliers (MCD)</h4>
-    <p><strong style='color: #333;'>Points forts :</strong></p>
-    <ul style='color: #333;'>
-    <li>Méthode robuste et statistique</li>
-    <li>Multidimensionnelle</li>
-    <li>Seuil objectif basé sur χ²</li>
-    </ul>
-    <p><strong style='color: #333;'>Limitations :</strong></p>
-    <ul style='color: #333;'>
-    <li>Requiert des données "propres"</li>
-    <li>Calcul intensif pour grands datasets</li>
-    <li>Interprétation business nécessaire</li>
-    </ul>
-    </div>
-    """, unsafe_allow_html=True)
 
 # Conclusion finale
 st.markdown("""
@@ -486,7 +446,7 @@ with col1:
 
 with col2:
     st.markdown("""
-    <div style='text-align: center; padding: 1rem; background-color: #f0f0f0; border-radius: 10px;'>
+    <div style='text-align: center; '>
         <h4>🔍 Page actuelle</h4>
         <p><em>Analyse & Problématique</em></p>
     </div>
