@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.covariance import MinCovDet
 from scipy.stats import chi2
+import plotly.express as px
+import plotly.graph_objects as go
 
 # ==============================
 # Config Streamlit
@@ -137,7 +137,7 @@ X_std = None
 X = None
 
 # ==============================
-# SECTION 2: K-means clustering
+# SECTION 2: K-means clustering INTERACTIF
 # ==============================
 st.markdown("---")
 st.subheader(" 2. Segmentation des transactions (K-means)")
@@ -172,26 +172,50 @@ if len(selected_vars) >= 2:
         if "Category" in df.columns:
             pca_df["Category"] = df.loc[X.index, "Category"].values
         
-        # Visualisation
-        fig_kmeans, ax_kmeans = plt.subplots(figsize=(10, 6))
-        
+        # VISUALISATION INTERACTIVE AVEC PLOTLY
         # Utiliser la taille des points pour représenter le montant total
         sizes = (pca_df["TotalAmount"] / pca_df["TotalAmount"].max() * 100) + 20
         
-        # Créer le scatter plot
-        scatter = ax_kmeans.scatter(pca_df["PC1"], pca_df["PC2"], 
-                                   c=pca_df["Cluster"], cmap="Set2", 
-                                   s=sizes, alpha=0.7, edgecolors='white', linewidth=0.5)
+        # Créer le graphique interactif
+        fig = px.scatter(
+            pca_df,
+            x="PC1",
+            y="PC2",
+            color="Cluster",
+            size=sizes,
+            title=f"Segmentation des transactions - K-means avec {k} clusters",
+            labels={
+                "PC1": f"Composante Principale 1 ({pca.explained_variance_ratio_[0]:.1%} de variance)",
+                "PC2": f"Composante Principale 2 ({pca.explained_variance_ratio_[1]:.1%} de variance)",
+                "Cluster": "Cluster"
+            },
+            hover_data={
+                "PC1": ":.3f",
+                "PC2": ":.3f",
+                "Cluster": True,
+                "TotalAmount": ":$.2f",
+                "Category": True if "Category" in pca_df.columns else False
+            },
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
         
-        ax_kmeans.set_title(f"Segmentation des transactions - K-means avec {k} clusters")
-        ax_kmeans.set_xlabel(f"Composante Principale 1 ({pca.explained_variance_ratio_[0]:.1%} de variance)")
-        ax_kmeans.set_ylabel(f"Composante Principale 2 ({pca.explained_variance_ratio_[1]:.1%} de variance)")
+        # Personnaliser l'apparence
+        fig.update_traces(
+            marker=dict(
+                line=dict(width=1, color='white'),
+                opacity=0.7
+            ),
+            selector=dict(mode='markers')
+        )
         
-        # Légende pour les clusters
-        legend1 = ax_kmeans.legend(*scatter.legend_elements(), title="Clusters", loc="upper right")
-        ax_kmeans.add_artist(legend1)
+        fig.update_layout(
+            height=600,
+            hovermode="closest",
+            showlegend=True,
+            legend_title="Clusters"
+        )
         
-        st.pyplot(fig_kmeans)
+        st.plotly_chart(fig, use_container_width=True)
         
         # Caractéristiques des clusters
         st.subheader(" Caractéristiques des clusters")
@@ -248,7 +272,7 @@ else:
     st.info(" Veuillez sélectionner au moins 2 variables pour commencer l'analyse.")
 
 # ==============================
-# SECTION 3: Détection d'outliers MCD
+# SECTION 3: Détection d'outliers MCD INTERACTIF AVEC COULEURS CORRIGÉES
 # ==============================
 st.markdown("---")
 st.subheader(" 3. Détection des transactions atypiques (MCD)")
@@ -267,44 +291,97 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
         total_count = len(md2_robust)
         outlier_percent = (outlier_count / total_count) * 100
         
-        # Histogramme
-        fig_mr, ax_mr = plt.subplots(figsize=(10, 5))
+        # HISTOGRAMME INTERACTIF AVEC PLOTLY - VERSION AVEC COULEURS LISIBLES
+        fig_hist = go.Figure()
         
-        # Définir un fond clair mais pas trop blanc
-        fig_mr.patch.set_facecolor('#f0f0f0')
-        ax_mr.set_facecolor('#f8f8f8')
+        # Ajouter l'histogramme
+        fig_hist.add_trace(go.Histogram(
+            x=md2_robust,
+            nbinsx=60,
+            name="Distances Mahalanobis²",
+            marker_color="#2A9D8F",
+            opacity=0.8,
+            marker_line=dict(color='black', width=0.5),
+            hovertemplate="<b>Distance Mahalanobis²:</b> %{x:.2f}<br><b>Fréquence:</b> %{y}<br><extra></extra>"
+        ))
         
-        # Histogramme des distances
-        sns.histplot(md2_robust, bins=60, ax=ax_mr, color="#2A9D8F", 
-                    edgecolor='black', linewidth=0.5, alpha=0.8)
-        ax_mr.axvline(thr_robust, color="red", linestyle="--", linewidth=2,
-                     label=f"Seuil χ²(0.975, df={p}) = {thr_robust:.2f}")
+        # Ajouter la ligne de seuil avec annotation en noir
+        fig_hist.add_vline(
+            x=thr_robust,
+            line_dash="dash",
+            line_color="red",
+            line_width=2,
+            annotation=dict(
+                text=f"Seuil χ²(0.975, df={p}) = {thr_robust:.2f}",
+                font=dict(color="black", size=12, family="Arial"),
+                bgcolor="rgba(255, 255, 255, 0.8)",
+                bordercolor="red",
+                borderwidth=1,
+                borderpad=4
+            ),
+            annotation_position="top right"
+        )
         
-        # Zone des outliers
-        ax_mr.axvspan(thr_robust, md2_robust.max(), alpha=0.1, color='red')
+        # Zone des outliers avec annotation en noir
+        fig_hist.add_vrect(
+            x0=thr_robust,
+            x1=md2_robust.max(),
+            fillcolor="red",
+            opacity=0.1,
+            line_width=0,
+            annotation=dict(
+                text=f"Outliers ({outlier_count})",
+                font=dict(color="black", size=12, family="Arial"),
+                bgcolor="rgba(255, 255, 255, 0.8)",
+                bordercolor="red",
+                borderwidth=1
+            ),
+            annotation_position="top left"
+        )
         
-        ax_mr.set_title("Distances de Mahalanobis² (MCD robuste)", 
-                       fontsize=14, fontweight='bold', color='#333333')
-        ax_mr.set_xlabel("Mahalanobis²", fontsize=12, color='#333333')
-        ax_mr.set_ylabel("Fréquence", fontsize=12, color='#333333')
+        # Personnaliser le layout avec toutes les couleurs en noir
+        fig_hist.update_layout(
+            title=dict(
+                text="Distances de Mahalanobis² (MCD robuste)",
+                font=dict(color="black", size=18, family="Arial"),
+                x=0.5,
+                xanchor='center'
+            ),
+            xaxis=dict(
+                title="Mahalanobis²",
+                title_font=dict(color="black", size=14, family="Arial"),
+                tickfont=dict(color="black", size=12, family="Arial"),
+                gridcolor='lightgray',
+                zerolinecolor='lightgray',
+                showline=True,
+                linecolor='#666666',
+                linewidth=1.5
+            ),
+            yaxis=dict(
+                title="Fréquence",
+                title_font=dict(color="black", size=14, family="Arial"),
+                tickfont=dict(color="black", size=12, family="Arial"),
+                gridcolor='lightgray',
+                zerolinecolor='lightgray',
+                showline=True,
+                linecolor='#666666',
+                linewidth=1.5
+            ),
+            height=500,
+            hovermode="x unified",
+            showlegend=False,
+            bargap=0.05,
+            plot_bgcolor='#f8f8f8',
+            paper_bgcolor='#f0f0f0',
+            font=dict(color="black", family="Arial"),
+            margin=dict(t=50, b=50, l=50, r=50)
+        )
         
-        # Personnaliser les ticks
-        ax_mr.tick_params(colors='#333333', labelsize=10)
+        # Ajouter une grille subtile
+        fig_hist.update_xaxes(showgrid=True, gridwidth=0.5, gridcolor='rgba(211, 211, 211, 0.3)')
+        fig_hist.update_yaxes(showgrid=True, gridwidth=0.5, gridcolor='rgba(211, 211, 211, 0.3)')
         
-        # Personnaliser le cadre
-        for spine in ax_mr.spines.values():
-            spine.set_color('#666666')
-            spine.set_linewidth(1.5)
-        
-        # Légende
-        legend = ax_mr.legend(frameon=True, framealpha=0.9, loc='upper right')
-        legend.get_frame().set_facecolor('#ffffff')
-        legend.get_frame().set_edgecolor('#666666')
-        
-        # Ajouter une grille
-        ax_mr.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, color='#666666')
-        
-        st.pyplot(fig_mr)
+        st.plotly_chart(fig_hist, use_container_width=True)
         
         # Résumé statistique
         col1, col2, col3 = st.columns(3)
@@ -344,7 +421,19 @@ if len(selected_vars) >= 2 and X is not None and X_std is not None and len(X) > 
                     outlier_df["Distance_Mahalanobis"] = md2_robust[out_robust]
                     outlier_df = outlier_df.sort_values("Distance_Mahalanobis", ascending=False)
                     
-                    st.dataframe(outlier_df.head(20))
+                    # Afficher le tableau avec mise en forme
+                    st.dataframe(
+                        outlier_df.head(20).style.format({
+                            'Distance_Mahalanobis': '{:.2f}',
+                            'TotalAmount': '${:.2f}' if 'TotalAmount' in outlier_df.columns else None,
+                            'UnitPrice': '${:.2f}' if 'UnitPrice' in outlier_df.columns else None
+                        }).background_gradient(
+                            subset=['Distance_Mahalanobis'], 
+                            cmap='Reds'
+                        ),
+                        use_container_width=True
+                    )
+                    
                     st.caption(f"Affichage des {min(20, outlier_count)} premières transactions sur {outlier_count} détectées comme outliers.")
                     
                     # Option pour télécharger
@@ -407,7 +496,7 @@ else:
 # SECTION 4: Synthèse et conclusions
 # ==============================
 st.markdown("---")
-
+st.subheader(" 4. Synthèse et conclusions")
 
 # Conclusion finale
 st.markdown("""
