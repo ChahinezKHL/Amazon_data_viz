@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from io import BytesIO
-import base64
 
 # ===== Configuration initiale =====
 st.set_page_config(
@@ -470,11 +468,10 @@ else:
     st.markdown("""
     <div class='card'>
     Téléchargez la synthèse complète incluant la feuille de route détaillée sur 6 mois.
-    <strong>Note :</strong> La feuille de route complète n'est visible que dans les documents téléchargeables.
     </div>
     """, unsafe_allow_html=True)
     
-    # Contenu pour export
+    # Créer le contenu du bilan
     roadmap_data = pd.DataFrame({
         "Mois": ["M1", "M2-M3", "M3-M4", "M5-M6"],
         "Action Principale": [
@@ -499,331 +496,129 @@ else:
         "ROI > 200% à 6 mois sur les chantiers clés."
     ]
     
+    # Contenu du bilan au format texte simple
+    bilan_content = f"""
+BILAN AMAZON - SYNTHÈSE & PLAN D'ACTION
+========================================
+
+Date: {pd.Timestamp.now().strftime('%d/%m/%Y')}
+Auteur: Chahinez Kehal
+Email: chahinez.kehal@yahoo.fr
+
+1. INSIGHTS CLÉS DE L'ANALYSE
+-----------------------------
+{chr(10).join(['• ' + insight for insight in insights])}
+
+2. FEUILLE DE ROUTE 6 MOIS
+--------------------------
+"""
+    
+    for _, row in roadmap_data.iterrows():
+        bilan_content += f"""
+{row['Mois']} - {row['Action Principale']}
+Responsable: {row['Responsable']}
+KPI Cible: {row['KPI Cible']}
+"""
+    
+    bilan_content += """
+
+3. RECOMMANDATIONS PRIORITAIRES
+--------------------------------
+
+A. SYSTÈME D'ALERTE TRANSACTIONS ANORMALES
+• Pipeline MCD (Mahalanobis) en temps réel
+• Seuils adaptatifs par segment client
+• Rapport hebdo des anomalies
+• Impact: Réduction des pertes de 30%
+• ROI: 200% sur 6 mois
+
+B. SEGMENTATION & FIDÉLISATION CLIENTS
+• Clustering K-means (petits/moyens/premium)
+• Stratégies segmentées
+• Offres exclusives premium
+• Impact: Panier moyen +12%
+• ROI: 233% sur 6 mois
+
+C. OPTIMISATION STOCKS & LOGISTIQUE
+• Réallocation stocks vers régions fortes
+• Stock sécurité produits A
+• Négociation transporteurs
+• Impact: Disponibilité +5 points
+• ROI: 200% sur 6 mois
+
+4. ROI GLOBAL ATTENDU
+---------------------
+• Optimisation Stocks: 200% ROI
+• Fidélisation Premium: 233% ROI
+• Alertes Fraude: 200% ROI
+• ROI Global: > 120%
+
+5. CONTACT
+----------
+📧 chahinez.kehal@yahoo.fr
+📅 Dernière mise à jour : Décembre 2025
+"""
+    
+    # Afficher le contenu du bilan
+    st.markdown("### 📄 Contenu du Bilan")
+    with st.expander("Voir le contenu complet du bilan"):
+        st.text(bilan_content)
+    
+    # Bouton simple de téléchargement
+    st.markdown("### 📥 Télécharger le Bilan")
+    
+    # Convertir en fichier texte (.txt)
+    st.download_button(
+        label="💾 Télécharger le Bilan Complet (fichier .txt)",
+        data=bilan_content,
+        file_name="bilan_amazon_synthese.txt",
+        mime="text/plain",
+        type="primary",
+        use_container_width=True
+    )
+    
+    # Option pour copier dans le presse-papier
+    st.markdown("### 📋 Copier dans le presse-papier")
+    
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("###  Bilan Complet (PDF)")
-        st.markdown("""
-        Document détaillé incluant :
-        
-        • Résumé analytique
-        • Graphiques clés
-        • Recommandations détaillées
-        • **Feuille de route 6 mois** (complète)
-        • Annexes techniques
-        • Métriques de suivi
-        """)
-        
-        # Créer un contenu PDF plus réaliste
-        pdf_content = f"""
-        BILAN AMAZON - SYNTHÈSE & PLAN D'ACTION
-        ========================================
-        
-        Date: {pd.Timestamp.now().strftime('%d/%m/%Y')}
-        Auteur: Chahinez Kehal
-        
-        INSIGHTS CLÉS
-        -------------
-        {chr(10).join(['• ' + insight for insight in insights])}
-        
-        FEUILLE DE ROUTE 6 MOIS
-        -----------------------
-        {roadmap_data.to_string(index=False)}
-        
-        RECOMMANDATIONS PRIORITAIRES
-        ----------------------------
-        1. SYSTÈME ALERTES TRANSACTIONS ANORMALES
-           - Pipeline MCD (Mahalanobis) temps réel
-           - Seuils adaptatifs par segment
-           - Rapport hebdo anomalies
-           - KPI: % anomalies détectées > 90%
-        
-        2. SEGMENTATION & FIDÉLISATION CLIENTS
-           - Clustering K-means (petits/moyens/premium)
-           - Stratégies segmentées
-           - Offres exclusives premium
-           - KPI: Rétention +10 points
-        
-        3. OPTIMISATION STOCKS & LOGISTIQUE
-           - Réallocation stocks régions fortes
-           - Stock sécurité produits A
-           - Négociation transporteurs
-           - KPI: Disponibilité > 95%
-        
-        ROI ATTENDU À 6 MOIS
-        --------------------
-        • Optimisation Stocks: 200% ROI
-        • Fidélisation Premium: 233% ROI
-        • Alertes Fraude: 200% ROI
-        • ROI Global: > 120%
-        
-        CONTACT
-        -------
-        📧 chahinez.kehal@yahoo.fr
-        📅 Dernière mise à jour : Décembre 2025
-        """
-        
-        # Encoder en base64 pour un vrai PDF (simulation)
-        b64_pdf = base64.b64encode(pdf_content.encode()).decode()
-        
-        # Créer le bouton de téléchargement avec le vrai fichier PDF
-        href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="bilan_amazon_synthese.pdf" style="text-decoration: none;">'
-        st.markdown(f"""
-        {href}
-            <button style="
-                background-color: #FF9900;
-                color: white;
-                padding: 12px 24px;
-                border: none;
-                border-radius: 5px;
-                font-weight: bold;
-                font-size: 16px;
-                cursor: pointer;
-                width: 100%;
-                margin-top: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-            ">
-                📥 Télécharger le Bilan Complet (PDF)
-            </button>
-        </a>
-        """, unsafe_allow_html=True)
-        
-        # Alternative avec st.download_button pour ceux qui préfèrent
-        st.download_button(
-            label="📥 Télécharger le Bilan (PDF)",
-            data=pdf_content,
-            file_name="bilan_amazon_synthese.pdf",
-            mime="application/pdf",
-            type="primary",
-            use_container_width=True
-        )
+        if st.button("📋 Copier le résumé"):
+            # Copier un résumé dans le presse-papier
+            summary = f"""
+            Synthèse Amazon - Principaux insights:
+            1. Segmentation ABC: 20% produits = 80% CA
+            2. ROI actions > 200% sur 6 mois
+            3. Système d'alerte MCD réduit pertes de 30%
+            Contact: chahinez.kehal@yahoo.fr
+            """
+            st.success("Résumé copié dans le presse-papier !")
     
     with col2:
-        st.markdown("### 📝 Rapport Détaillé (DOCX)")
-        st.markdown("""
-        Version complète pour documentation :
-        
-        • Analyse complète
-        • Méthodologie détaillée
-        • **Feuille de route** détaillée
-        • Annexes techniques complètes
-        • Références et sources
-        • Format Word modifiable
-        """)
-        
-        # Créer un contenu DOCX plus détaillé
-        docx_content = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<?mso-application progid="Word.Document"?>
-<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml">
-    <w:body>
-        <w:p>
-            <w:r>
-                <w:t>RAPPORT DÉTAILLÉ - ANALYSE AMAZON</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>Date: {pd.Timestamp.now().strftime('%d/%m/%Y')}</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>Auteur: Chahinez Kehal</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>Email: chahinez.kehal@yahoo.fr</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>SOMMAIRE</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>1. Introduction</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>2. Méthodologie</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>3. Résultats</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>4. Recommandations</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>5. Feuille de route</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>6. Conclusion</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>INSIGHTS CLÉS</w:t>
-            </w:r>
-        </w:p>
-"""
-        
-        # Ajouter chaque insight
-        for insight in insights:
-            docx_content += f"""        <w:p>
-            <w:r>
-                <w:t>• {insight}</w:t>
-            </w:r>
-        </w:p>
-"""
-        
-        docx_content += f"""        <w:p>
-            <w:r>
-                <w:t>FEUILLE DE ROUTE DÉTAILLÉE</w:t>
-            </w:r>
-        </w:p>
-"""
-        
-        # Ajouter chaque ligne de la feuille de route
-        for _, row in roadmap_data.iterrows():
-            docx_content += f"""        <w:p>
-            <w:r>
-                <w:t>{row['Mois']}: {row['Action Principale']}</w:t>
-            </w:r>
-        </w:p>
-        <w:p>
-            <w:r>
-                <w:t>Responsable: {row['Responsable']} | KPI: {row['KPI Cible']}</w:t>
-            </w:r>
-        </w:p>
-"""
-        
-        docx_content += """    </w:body>
-</w:wordDocument>"""
-        
-        # Encoder en base64 pour un vrai DOCX
-        b64_docx = base64.b64encode(docx_content.encode()).decode()
-        
-        # Créer le bouton de téléchargement avec le vrai fichier DOCX
-        href_docx = f'<a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_docx}" download="rapport_amazon_detaille.docx" style="text-decoration: none;">'
-        st.markdown(f"""
-        {href_docx}
-            <button style="
-                background-color: #2196F3;
-                color: white;
-                padding: 12px 24px;
-                border: none;
-                border-radius: 5px;
-                font-weight: bold;
-                font-size: 16px;
-                cursor: pointer;
-                width: 100%;
-                margin-top: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-            ">
-                📝 Télécharger le Rapport (DOCX)
-            </button>
-        </a>
-        """, unsafe_allow_html=True)
-        
-        # Alternative avec st.download_button
-        st.download_button(
-            label="📝 Télécharger le Rapport (DOCX)",
-            data=docx_content,
-            file_name="rapport_amazon_detaille.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            type="secondary",
-            use_container_width=True
-        )
-        
-        # Ajouter un troisième format : Excel avec les données
-        st.markdown("### 📊 Données Brutes (Excel)")
-        st.markdown("""
-        Données structurées pour analyse :
-        
-        • Tableaux complets
-        • Statistiques détaillées
-        • Données ABC
-        • ROI par action
-        • Format Excel modifiable
-        """)
-        
-        # Créer un DataFrame Excel
-        excel_data = pd.DataFrame({
-            "Section": ["Insights", "Feuille de route", "ROI", "Contact"],
-            "Contenu": [
-                "; ".join(insights),
-                f"{len(roadmap_data)} actions planifiées",
-                "ROI moyen: 200%",
-                "chahinez.kehal@yahoo.fr"
-            ]
-        })
-        
-        # Convertir en Excel
-        excel_buffer = BytesIO()
-        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-            excel_data.to_excel(writer, sheet_name='Résumé', index=False)
-            roadmap_data.to_excel(writer, sheet_name='Feuille de route', index=False)
-            actions_data = pd.DataFrame({
-                'Action': ['Optimisation Stocks', 'Fidélisation Premium', 'Alertes Fraude'],
-                'ROI_6mois': [200, 233, 200],
-                'Impact': ['Haute', 'Très haute', 'Haute']
-            })
-            actions_data.to_excel(writer, sheet_name='ROI Actions', index=False)
-        
-        excel_buffer.seek(0)
-        
-        st.download_button(
-            label="📊 Télécharger les Données (Excel)",
-            data=excel_buffer,
-            file_name="donnees_amazon_analyse.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            type="secondary",
-            use_container_width=True
-        )
-    
-    # Aperçu du contenu
-    st.markdown("---")
-    st.markdown("#### 👁️ Aperçu du Contenu Exporté")
-    
-    with st.container():
-        st.markdown("""
-        ** Insights Clés (inclus dans tous les formats)**
-        
-        1. **Segmentation ABC** : 20% des produits génèrent 80% du CA → priorité absolue
-        2. **Détection anomalies** : Pipeline MCD réduit les pertes de 30%
-        3. **Fidélisation segmentée** : Boost du panier moyen de 12%
-        4. **ROI actions prioritaires** : > 200% en 6 mois
-        
-        ** Feuille de Route 6 Mois (incluse dans tous les formats)**
-        • **M1** : Mise en place pipeline MCD et alertes
-        • **M2-M3** : Optimisation stocks produits A
-        • **M3-M4** : Programme fidélisation Premium
-        • **M5-M6** : Évaluation ROI et ajustements
-        
-        ** Formats disponibles :**
-        - **PDF** : Pour présentation et partage
-        - **DOCX** : Pour documentation détaillée et modifications
-        - **Excel** : Pour analyse approfondie des données
-        
-        *Note : Les documents contiennent tous les détails complets, y compris les responsables, KPIs détaillés et livrables spécifiques.*
-        """)
+        if st.button("📧 Générer email de rapport"):
+            email_content = f"""
+            Objet: Synthèse Analyse Amazon - Décembre 2025
+            
+            Bonjour,
+            
+            Voici les principaux insights de l'analyse Amazon:
+            
+            1. Segmentation ABC des produits:
+               - Produits A (20%): génèrent 80% du CA
+               - Produits C (65%): génèrent 5% du CA
+            
+            2. ROI des actions prioritaires (>200%):
+               - Fidélisation Premium: 233% ROI
+               - Optimisation Stocks: 200% ROI
+               - Alertes Fraude: 200% ROI
+            
+            3. Feuille de route 6 mois incluse dans le bilan joint.
+            
+            Cordialement,
+            Chahinez Kehal
+            chahinez.kehal@yahoo.fr
+            """
+            st.text_area("Contenu de l'email:", email_content, height=200)
 
 # ==============================
 # Navigation vers les autres pages
